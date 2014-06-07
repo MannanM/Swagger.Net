@@ -45,6 +45,10 @@ namespace Swagger.Net
             return "No Documentation Found.";
         }
 
+        public string GetResponseDocumentation(HttpActionDescriptor actionDescriptor) {
+            return GetDocumentation(actionDescriptor);
+        }
+
         public virtual bool GetRequired(HttpParameterDescriptor parameterDescriptor)
         {
             ReflectedHttpParameterDescriptor reflectedParameterDescriptor = parameterDescriptor as ReflectedHttpParameterDescriptor;
@@ -54,6 +58,10 @@ namespace Swagger.Net
             }
 
             return true;
+        }
+
+        public string GetDocumentation(HttpControllerDescriptor controllerDescriptor) {
+            throw new NotImplementedException();
         }
 
         public virtual string GetDocumentation(HttpActionDescriptor actionDescriptor)
