@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using Swagger.Net.DataTypeModels;
 
 namespace Swagger.Net
 {
@@ -37,14 +38,15 @@ namespace Swagger.Net
         /// <returns>A resrouce listing</returns>
         public static ResourceListing CreateResourceListing(HttpControllerContext controllerContext, bool includeResourcePath = false)
         {
-            Uri uri = controllerContext.Request.RequestUri;
+            var uri = controllerContext.Request.RequestUri;
 
-            ResourceListing rl = new ResourceListing()
+            var rl = new ResourceListing()
             {
                 apiVersion = Assembly.GetCallingAssembly().GetType().Assembly.GetName().Version.ToString(),
                 swaggerVersion = SWAGGER_VERSION,
                 basePath = uri.GetLeftPart(UriPartial.Authority) + HttpRuntime.AppDomainAppVirtualPath.TrimEnd('/'),
-                apis = new List<ResourceApi>()
+                apis = new List<ResourceApi>(),
+                models = new SwaggerDataTypeModels()
             };
 
             if (includeResourcePath) rl.resourcePath = controllerContext.ControllerDescriptor.ControllerName;
@@ -81,7 +83,7 @@ namespace Swagger.Net
             {
                 httpMethod = api.HttpMethod.ToString(),
                 nickname = docProvider.GetNickname(api.ActionDescriptor),
-                responseClass = docProvider.GetResponseClass(api.ActionDescriptor),
+                type = docProvider.GetType(api.ActionDescriptor),
                 summary = api.Documentation,
                 notes = docProvider.GetNotes(api.ActionDescriptor),
                 parameters = new List<ResourceApiOperationParameter>()
@@ -120,6 +122,7 @@ namespace Swagger.Net
         public string basePath { get; set; }
         public string resourcePath { get; set; }
         public List<ResourceApi> apis { get; set; }
+        public SwaggerDataTypeModels models { get; set; }
     }
 
     public class ResourceApi
@@ -133,7 +136,8 @@ namespace Swagger.Net
     {
         public string httpMethod { get; set; }
         public string nickname { get; set; }
-        public string responseClass { get; set; }
+        public string type { get; set; }
+//        public string type { get; set; }
         public string summary { get; set; }
         public string notes { get; set; }
         public List<ResourceApiOperationParameter> parameters { get; set; }

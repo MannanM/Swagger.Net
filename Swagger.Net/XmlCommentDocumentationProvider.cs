@@ -94,12 +94,12 @@ namespace Swagger.Net
             return "No Documentation Found.";
         }
 
-        public virtual string GetResponseClass(HttpActionDescriptor actionDescriptor)
+        public virtual string GetType(HttpActionDescriptor actionDescriptor)
         {
             var reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;
             if (reflectedActionDescriptor != null)
                 return SwaggerSpec.GetDataTypeName(reflectedActionDescriptor.MethodInfo.ReturnType);
-            return "void";
+            return null;
         }
 
         public virtual string GetNickname(HttpActionDescriptor actionDescriptor)

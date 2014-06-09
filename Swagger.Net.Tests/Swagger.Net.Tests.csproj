@@ -74,6 +74,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="SwaggerDataTypeModelTest.cs" />
     <Compile Include="SwaggerSpecTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

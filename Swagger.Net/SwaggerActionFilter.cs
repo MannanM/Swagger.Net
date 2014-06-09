@@ -42,7 +42,7 @@ namespace Swagger.Net
         {
             var docProvider = (XmlCommentDocumentationProvider)GlobalConfiguration.Configuration.Services.GetDocumentationProvider();
 
-            ResourceListing r = SwaggerGen.CreateResourceListing(actionContext);
+            var r = SwaggerGen.CreateResourceListing(actionContext);
 
             foreach (var grp in GlobalConfiguration.Configuration.Services.GetApiExplorer().ApiDescriptions.GroupBy(api => api.HttpMethod))
             {
@@ -64,8 +64,11 @@ namespace Swagger.Net
                     existing.Add(rApi);
                     r.apis.Add(rApi);
 
-                    ResourceApiOperation rApiOperation = SwaggerGen.CreateResourceApiOperation(api, docProvider);
+                    var rApiOperation = SwaggerGen.CreateResourceApiOperation(api, docProvider);
                     rApi.operations.Add(rApiOperation);
+                    if (api.ActionDescriptor as ReflectedHttpActionDescriptor != null) {
+                        r.models.Add((api.ActionDescriptor as ReflectedHttpActionDescriptor).MethodInfo.ReturnType);
+                    }
 
                     foreach (var param in api.ParameterDescriptions)
                     {

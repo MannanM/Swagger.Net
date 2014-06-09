@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 namespace Swagger.Net
 {
@@ -12,10 +13,10 @@ namespace Swagger.Net
             { typeof(bool), "boolean" },
             { typeof(sbyte), "byte" },
             { typeof(byte), "byte" },
-            { typeof(ushort), "int" },
-            { typeof(short), "int" },
-            { typeof(uint), "int" },
-            { typeof(int), "int" },
+            { typeof(ushort), "integer" },
+            { typeof(short), "integer" },
+            { typeof(uint), "integer" },
+            { typeof(int), "integer" },
             { typeof(ulong), "long" },
             { typeof(long), "long" },
             { typeof(float), "float" },
@@ -26,17 +27,17 @@ namespace Swagger.Net
             { typeof(DateTime), "Date" },
             { typeof(TimeSpan), "Date" },
             { typeof(object), "object" },
+            { typeof(void), "void"},
+            //I know this isn't correct but I don't want to return all the properties of this class to the user
+            { typeof(HttpResponseMessage), "void"}
         };
 
         public static string GetDataTypeName(Type type)
         {
-            if (type == typeof(string)) //guard clause because string is also IEnumerable
-                return GetNameFromSimpleType(type);
-
-            if (type == typeof(IEnumerable) || type.GetInterfaces().Any(t => t == typeof(IEnumerable)))
+            if (IsEnumerable(type))
             {
                 var typeArg = type.IsGenericType ? type.GetGenericArguments().First() : typeof(object);
-                return string.Format("Array[{0}]", GetDataTypeName(typeArg));
+                return string.Format("array[{0}]", GetDataTypeName(typeArg));
             }
 
             if (type.IsGenericType)
@@ -50,6 +51,12 @@ namespace Swagger.Net
             return GetNameFromSimpleType(type);
         }
 
+        public static bool IsBasicObject(Type type) {
+            return SYSTEM_TYPE_NAMES.ContainsKey(type);
+        }
+        public static bool IsEnumerable(Type type) {
+            return type != typeof (string) && (type == typeof (IEnumerable) || type.GetInterfaces().Any(t => t == typeof (IEnumerable)));
+        }
         private static string GetNameFromSimpleType(Type type)
         {
             if (SYSTEM_TYPE_NAMES.ContainsKey(type))

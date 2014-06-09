@@ -64,7 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypeModels\SwaggerDataTypeDescription.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataTypeModels\SwaggerDataTypeModels.cs" />
     <Compile Include="SwaggerModels.cs" />
     <Compile Include="SwaggerActionFilter.cs" />
     <Compile Include="SwaggerController.cs" />
