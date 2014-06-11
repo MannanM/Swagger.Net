@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Remoting.Messaging;
 
 namespace Swagger.Net
 {
@@ -36,8 +37,7 @@ namespace Swagger.Net
         {
             if (IsEnumerable(type))
             {
-                var typeArg = type.IsGenericType ? type.GetGenericArguments().First() : typeof(object);
-                return string.Format("array[{0}]", GetDataTypeName(typeArg));
+                return string.Format("array[{0}]", GetDataTypeName(GetEnumerableType(type)));
             }
 
             if (type.IsGenericType)
@@ -56,6 +56,9 @@ namespace Swagger.Net
         }
         public static bool IsEnumerable(Type type) {
             return type != typeof (string) && (type == typeof (IEnumerable) || type.GetInterfaces().Any(t => t == typeof (IEnumerable)));
+        }
+        public static Type GetEnumerableType(Type type) {
+            return type.IsGenericType ? type.GetGenericArguments().First() : typeof(object);
         }
         private static string GetNameFromSimpleType(Type type)
         {

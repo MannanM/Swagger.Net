@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Swagger.Net.DataTypeModels;
 
 namespace Swagger.Net.Tests {
@@ -23,8 +19,22 @@ namespace Swagger.Net.Tests {
                                 "'Field1':{'type':'string'}," +
                                 "'Field2':{'type':'array','items':{'type':'string'}}," +
                                 "'Field3':{'$ref':'InnerModel'}," +
-                                "'Field4':{'type':'array','items':{'$ref':'InnerModel'}}"+
+                                "'Field4':{'type':'array','items':{'$ref':'InnerModel'}}," +
+                                "'Field5':{'type':'boolean'}" +
                             "}},'InnerModel':{" +
+                            "'id':'InnerModel'," +
+                            //"'required':null," +
+                            "'properties':{" +
+                                "'InnerAttribute':{'type':'integer'}" +
+                            "}}}",
+                JsonConvert.SerializeObject(result).Replace("\"", "'"));
+        }
+
+        [TestMethod]
+        public void TestSwaggerModelConverterForEnumerable() {
+            var result = new SwaggerDataTypeModels { typeof(List<InnerModel>) };
+
+            Assert.AreEqual("{'InnerModel':{" +
                             "'id':'InnerModel'," +
                             //"'required':null," +
                             "'properties':{" +
@@ -39,6 +49,7 @@ namespace Swagger.Net.Tests {
             public List<string> Field2;
             public InnerModel Field3;
             public List<InnerModel> Field4;
+            public bool Field5 { get; set; }
         }
 
         private class InnerModel {

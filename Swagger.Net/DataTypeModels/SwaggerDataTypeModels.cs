@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace Swagger.Net.DataTypeModels {
@@ -13,7 +12,16 @@ namespace Swagger.Net.DataTypeModels {
         /// </summary>
         /// <param name="type">Type to add</param>
         public void Add(Type type) {
-            if (!ContainsKey(type.Name) && !SwaggerSpec.IsBasicObject(type)) {
+            if (SwaggerSpec.IsEnumerable(type)) {
+                //Don't bother adding an Enumerable type, just add what it is of
+                InnerAdd(SwaggerSpec.GetEnumerableType(type));
+            } else if (!SwaggerSpec.IsBasicObject(type)) {
+                InnerAdd(type);
+            }
+        }
+
+        private void InnerAdd(Type type) {
+            if (!ContainsKey(type.Name)) {
                 //This looks stupid but you need to reserve the name before converting to prevent stack overflow
                 Add(type.Name, new SwaggerDataTypeDescription());
                 this[type.Name] = Convert(type);
@@ -26,9 +34,14 @@ namespace Swagger.Net.DataTypeModels {
                 properties = new Dictionary<string, object>()
             };
 
-            var properties = inputType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-            foreach (var info in properties) {
+            var fields = inputType.GetFields(BindingFlags.Instance | BindingFlags.Public);
+            foreach (var info in fields) {
                 result.properties.Add(info.Name, ConvertProperty(info.FieldType));
+            }
+
+            var properties = inputType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            foreach (var info in properties) {
+                result.properties.Add(info.Name, ConvertProperty(info.PropertyType));
             }
 
             return result;
@@ -36,7 +49,7 @@ namespace Swagger.Net.DataTypeModels {
 
         private object ConvertProperty(Type type) {
             if (SwaggerSpec.IsEnumerable(type)) {
-                var typeArg = type.IsGenericType ? type.GetGenericArguments().First() : typeof (object);
+                var typeArg = SwaggerSpec.GetEnumerableType(type);
                 if (SwaggerSpec.IsBasicObject(typeArg)) {
                     return new ArrayProperty("type", SwaggerSpec.GetDataTypeName(typeArg));
                 }
