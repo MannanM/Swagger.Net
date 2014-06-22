@@ -74,6 +74,7 @@ namespace Swagger.Net
                     {
                         ResourceApiOperationParameter parameter = SwaggerGen.CreateResourceApiOperationParameter(api, param, docProvider);
                         rApiOperation.parameters.Add(parameter);
+                        r.models.Add(param.ParameterDescriptor.ParameterType);
                     }
                 }
             }

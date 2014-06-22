@@ -56,6 +56,12 @@ namespace Swagger.Net.DataTypeModels {
                 Add(typeArg);
                 return new ArrayProperty("$ref", typeArg.Name);
             }
+            if (type.IsEnum) {
+                return new Dictionary<string, object> {
+                    {"type", "string"},
+                    {"enum", Enum.GetNames(type)}
+                };
+            }
             if (!SwaggerSpec.IsBasicObject(type)) {
                 Add(type);
                 return new Dictionary<string, object> {{"$ref", type.Name}};

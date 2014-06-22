@@ -20,7 +20,8 @@ namespace Swagger.Net.Tests {
                                 "'Field2':{'type':'array','items':{'type':'string'}}," +
                                 "'Field3':{'$ref':'InnerModel'}," +
                                 "'Field4':{'type':'array','items':{'$ref':'InnerModel'}}," +
-                                "'Field5':{'type':'boolean'}" +
+                                "'Field5':{'type':'string','enum':['EnumValue1','EnumValue2']}," +
+                                "'Field6':{'type':'boolean'}" +
                             "}},'InnerModel':{" +
                             "'id':'InnerModel'," +
                             //"'required':null," +
@@ -49,7 +50,13 @@ namespace Swagger.Net.Tests {
             public List<string> Field2;
             public InnerModel Field3;
             public List<InnerModel> Field4;
-            public bool Field5 { get; set; }
+            public ExampleEnum Field5;
+            public bool Field6 { get; set; }
+            
+        }
+
+        public enum ExampleEnum {
+            EnumValue1, EnumValue2
         }
 
         private class InnerModel {
